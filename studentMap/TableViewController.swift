@@ -84,7 +84,7 @@ class TableViewController: UIViewController, UITableViewDelegate,UITableViewData
         
         let app = UIApplication.shared
         app.open(URL(string: studentURL!)!, options: [:], completionHandler: nil)
-        
+               
     }
     
     
