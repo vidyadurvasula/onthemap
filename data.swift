@@ -7,10 +7,10 @@
 //
 
 import Foundation
- class Student: NSObject {
-
+class Student: NSObject {
+    
     var studentLocations = [studentlocation]()
     static let sharedInstance = Student()
     
-
+    
 }

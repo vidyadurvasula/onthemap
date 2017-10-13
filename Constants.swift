@@ -15,54 +15,54 @@ extension Client {
         static let parseAPIKey : String = "QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY"
     }
     
-        struct urlUdacity {
-            static let baseURL = "https://www.udacity.com/api"
-            static let sessionURL = "https://www.udacity.com/api/session"
-            static let userURL = "https://www.udacity.com/api/users"
-            static let udacitySignupURL = "https://www.udacity.com/account/auth#!/signup"
-
-static let studentlocationURL : String = "https://parse.udacity.com/parse/classes/StudentLocation"
-        }
+    struct urlUdacity {
+        static let baseURL = "https://www.udacity.com/api"
+        static let sessionURL = "https://www.udacity.com/api/session"
+        static let userURL = "https://www.udacity.com/api/users"
+        static let udacitySignupURL = "https://www.udacity.com/account/auth#!/signup"
+        
+        static let studentlocationURL : String = "https://parse.udacity.com/parse/classes/StudentLocation"
+    }
     
-        struct ParameterKeys {
-            static let udacity = "udacity"
-            static let username = "username"
-            static let password = "password"
-            static let sessionID = "session"
-            static let limitKey = "limit"
-            static let skipKey = "skip"
-            static let orderKey = "order"
-        }
+    struct ParameterKeys {
+        static let udacity = "udacity"
+        static let username = "username"
+        static let password = "password"
+        static let sessionID = "session"
+        static let limitKey = "limit"
+        static let skipKey = "skip"
+        static let orderKey = "order"
+    }
+    
+    struct HttpFields
+    {
+        static let acceptField = "Accept"
+        static let contentTypeField = "Content-Type"
         
-        struct HttpFields
-        {
-            static let acceptField = "Accept"
-            static let contentTypeField = "Content-Type"
-            
-            static let parseAppIDKey = "X-Parse-Application-Id"
-            static let parseRestAPIKey = "X-Parse-REST-API-Key"
-        }
+        static let parseAppIDKey = "X-Parse-Application-Id"
+        static let parseRestAPIKey = "X-Parse-REST-API-Key"
+    }
+    
+    
+    
+    
+    struct ResponseKeys
+    {
+        static let results = "results"
+        
+        static let createdAt = "createdAt"
+        static let firstName = "firstName"
+        static let lastName = "lastName"
+        static let latitude = "latitude"
+        static let longitude = "longitude"
+        static let mapString = "mapString"
+        static let mediaURL = "mediaURL"
+        static let objectId = "objectId"
+        static let uniqueKey = "uniqueKey"
+        static let updatedAt = "updatedAt"
         
         
-        
-        
-        struct ResponseKeys
-        {
-            static let results = "results"
-            
-            static let createdAt = "createdAt"
-            static let firstName = "firstName"
-            static let lastName = "lastName"
-            static let latitude = "latitude"
-            static let longitude = "longitude"
-            static let mapString = "mapString"
-            static let mediaURL = "mediaURL"
-            static let objectId = "objectId"
-            static let uniqueKey = "uniqueKey"
-            static let updatedAt = "updatedAt"
-            
-            
-        }
-
-   
+    }
+    
+    
 }

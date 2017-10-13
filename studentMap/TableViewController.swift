@@ -13,9 +13,9 @@ class TableViewController: UIViewController, UITableViewDelegate,UITableViewData
     
     
     var studentLocations = Student.sharedInstance.studentLocations
-
+    
     @IBOutlet weak var acticityindicator: UIActivityIndicatorView!
-
+    
     @IBOutlet weak var tableview: UITableView!
     
     
@@ -23,7 +23,7 @@ class TableViewController: UIViewController, UITableViewDelegate,UITableViewData
         
         let InfoVc = self.storyboard?.instantiateViewController(withIdentifier: "InformationViewController") as! InformationPostingViewController
         self.present(InfoVc,animated: true,completion: nil)
-
+        
         
     }
     
@@ -34,15 +34,15 @@ class TableViewController: UIViewController, UITableViewDelegate,UITableViewData
         }
         
         Client.sharedInstance().taskForPOSTDeleteSession(completionHandler: { (results,error) in
-             })
+        })
         self.dismiss(animated: true, completion: nil)
         self.acticityindicator.stopAnimating()
-
+        
     }
     
     
     @IBAction func refresh(_ sender: Any) {
-    Client.sharedInstance().taskForGETMethod({ (results,error) -> Void in
+        Client.sharedInstance().taskForGETMethod({ (results,error) -> Void in
             
             guard(error == nil) else {
                 let errorMessage = UIAlertController.init(title: "Network Error", message: "Please check network connection and try again.", preferredStyle: .alert)
@@ -55,31 +55,31 @@ class TableViewController: UIViewController, UITableViewDelegate,UITableViewData
         })
         
         self.tableview.reloadData()
-
+        
         
     } // End logoutBut
     
     
     
-     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return studentLocations.count    }
     
-   func numberOfSections(in tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
     }
     
-func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell")
-    let student = studentLocations[indexPath.row]
-    
+        let student = studentLocations[indexPath.row]
+        
         cell?.textLabel?.text = student.firstName! + " " + student.lastName!
         return cell!
     }
-   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-    let student = studentLocations[indexPath.row] as studentlocation
+        let student = studentLocations[indexPath.row] as studentlocation
         let studentURL = student.mediaURL
         
         let app = UIApplication.shared
@@ -87,12 +87,12 @@ func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> U
         
     }
     
-
-override func viewWillAppear(_ animated: Bool) {
-    super.viewDidAppear(animated)
     
-    acticityindicator.color = UIColor.darkGray
-    acticityindicator.hidesWhenStopped = true
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        acticityindicator.color = UIColor.darkGray
+        acticityindicator.hidesWhenStopped = true
         Client.sharedInstance().taskForGETMethod({ (results,error) -> Void in
             
             guard(error == nil) else {
@@ -112,26 +112,26 @@ override func viewWillAppear(_ animated: Bool) {
                         self.tableview.reloadData()
                 }
             }
-            
+                
             else
             {
-            print(error!)
+                print(error!)
             }
-
+            
         })
-    
-    self.tableview.reloadData()
+       
+        self.tableview.reloadData()
     }
     
-
-
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.tableview.delegate = self
         self.tableview.dataSource = self
-
+        
         // Do any additional setup after loading the view.
     }
-
-    }
+    
+}

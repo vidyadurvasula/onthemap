@@ -27,55 +27,61 @@ class Client : NSObject {
     }
     func taskForGETMethod(_  completionHandlerForGET: @escaping ( _ result:AnyObject?,_ error: NSError?) -> Void)  {
         
-    
+        
         let request = NSMutableURLRequest(url: URL(string: "\(Client.urlUdacity.studentlocationURL)?limit=100&order=-updatedAt")!)
         
         request.httpMethod = "GET"
         request.addValue(Client.Constants.parseApplicationID, forHTTPHeaderField:Client.HttpFields.parseAppIDKey)
         request.addValue(Client.Constants.parseAPIKey, forHTTPHeaderField:Client.HttpFields.parseRestAPIKey)
-    request.addValue("application/json", forHTTPHeaderField: "Accept")
-    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-                let task = self.session.dataTask(with: request as URLRequest) { data, response, error in
-                
-                    if error != nil{
-                        let userInfo = [NSLocalizedDescriptionKey: error]
-                        completionHandlerForGET(nil,NSError(domain:"taskToPOSTSession", code: 1, userInfo:userInfo ))
-                    }
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        let task = self.session.dataTask(with: request as URLRequest) { data, response, error in
+            
+            if error != nil{
+                let userInfo = [NSLocalizedDescriptionKey: error]
+                completionHandlerForGET(nil,NSError(domain:"taskToGetSession", code: 1, userInfo:userInfo ))
+            }
+            
+            guard let data = data else {
+                print("Could not find the data")
+                return
+            }
+            //let range = Range(uncheckedBounds: (5, data.count))
+            // let scrubbedData = data.subdata(in: range)
+            
+            DispatchQueue.global(qos: .userInitiated).async {
+                do {
                     
-                    guard let data = data else {
-                        print("Could not find the data")
-                        return
+                    
+                    let Result = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as AnyObject
+                    
+                    if let actualresults = Result["results"] as? [[String:AnyObject]]
+                    {
+                        
+                        let studentLocations = studentlocation.studentLocationsFromResults( actualresults )
+                        
+                        
+                        completionHandlerForGET(studentLocations as AnyObject?,nil)
                     }
-                    //let range = Range(uncheckedBounds: (5, data.count))
-                   // let scrubbedData = data.subdata(in: range)
-
-                    DispatchQueue.global(qos: .userInitiated).async {
-                        do {
-                            let Result = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as AnyObject
-                            
-                            if let actualresults = Result["results"]  {
-                            
-                                let studentLocations = studentlocation.studentLocationsFromResults( actualresults as! [[String : AnyObject]])
-                                
-                                
-                               completionHandlerForGET(studentLocations as AnyObject?,nil)
-                            }                                else {
-                                    
-                                    print("results not found ")
-                                }
-                        }
-                        
-                        
-                    catch {
-                            print("Error with the JSON data")
-                        }
+                    else {
+                        completionHandlerForGET(nil,NSError(domain: "postStudentLocation parsing", code: 1,userInfo:[NSLocalizedDescriptionKey: "Could not parse the data"]))
                         
                     }
+                }
+                    
+                    
+                catch {
+                    let userInfo = [NSLocalizedDescriptionKey: "Cannot parse the \(data) into json Format"]
+                    completionHandlerForGET(nil,NSError(domain:"convertDataWithCompletionHandler", code:1,userInfo: userInfo))
+                    
+                }
+                
+            }
+        }
+        
+        task.resume()
     }
     
-    task.resume()
-    }
-
     
     func taskForPOSTStudent(completionHandler: @escaping (_ error: String?) -> Void) {
         
@@ -97,19 +103,18 @@ class Client : NSObject {
         
         let task = self.session.dataTask(with: request as URLRequest) { data, response, error in
             
-            func errorHandler(_ error: String) {
-                completionHandler(error)
-            }
             
             guard (error == nil) else {
-                errorHandler(error.debugDescription)
+                
+                completionHandler(error?.localizedDescription)
+                
                 return
             }
             
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
                 let errorString = (response as? HTTPURLResponse)?.statusCode.description
                 print(errorString!)
-                errorHandler("Bad response from the server.")
+                completionHandler(error?.localizedDescription)
                 return
             }
             
@@ -120,15 +125,15 @@ class Client : NSObject {
                 do {
                     parsedResult = try JSONSerialization.jsonObject(with: data!, options: .allowFragments) as! [String:AnyObject]
                     
-                   
-                   
                     
-                  let objectid  = parsedResult["objectId"] as! String
+                    
+                    
+                    let objectid  = parsedResult["objectId"] as! String
                     User.sharedUser().objectID = objectid
-
-
+                    
+                    
                 } catch {
-                    print("There was an error creating the student.")
+                    completionHandler(error as? String)
                 }
                 completionHandler(nil)
             }
@@ -137,16 +142,16 @@ class Client : NSObject {
         task.resume()
         
     } // End taskForPOSTStudent
-
- 
+    
+    
     func taskForuserdata(completionHandlerforuserdata: @escaping () -> Void) {
         print("Starting taskForGETSession")
         
         let request = NSMutableURLRequest(url: URL(string: "https://www.udacity.com/api/users/\(User.sharedUser().uniqueKey)")!)
         let session = URLSession.shared
-       
         
-            
+        
+        
         let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
             
             func sendError(_ error: String) {
@@ -179,8 +184,8 @@ class Client : NSObject {
             DispatchQueue.main.async {
                 do {
                     parsedResult = try JSONSerialization.jsonObject(with: newData, options: .allowFragments) as! [String:AnyObject]
-                                        if let resultsinfo = parsedResult {
-                    
+                    if let resultsinfo = parsedResult {
+                        
                         let user = resultsinfo["user"] as! [String:AnyObject]
                         print (user)
                         guard  let lastname = user["last_name"] as? String else {
@@ -188,14 +193,14 @@ class Client : NSObject {
                             return
                         }
                         let firstname = user["first_name"] as? String
-                                           
+                        
                         User.sharedUser().lastName = lastname
                         User.sharedUser().firstName = firstname!
-print(User.sharedUser().firstName)
-                                            print(User.sharedUser().lastName)
+                        print(User.sharedUser().firstName)
+                        print(User.sharedUser().lastName)
                     } else {
                         print("no user found")
-                
+                        
                     }
                     
                     
@@ -207,12 +212,12 @@ print(User.sharedUser().firstName)
                 completionHandlerforuserdata()
             }
         }
-       
+        
         task.resume()
-
+        
         
     }
-func taskForPOSTDeleteSession(completionHandler: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void) {
+    func taskForPOSTDeleteSession(completionHandler: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void) {
         
         var xsrfCookie: HTTPCookie? = nil
         
@@ -258,13 +263,13 @@ func taskForPOSTDeleteSession(completionHandler: @escaping (_ result: AnyObject?
                     print("Error with the JSON data")
                 }
             }
-
+            
             
         }
         
         task.resume()
         
-}
+    }
     
     
     func taskForGETSession(completionHandler: @escaping () -> Void) {
@@ -291,7 +296,7 @@ func taskForPOSTDeleteSession(completionHandler: @escaping (_ result: AnyObject?
         request.addValue(Client.Constants.parseAPIKey, forHTTPHeaderField:Client.HttpFields.parseRestAPIKey)
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-              let task = self.session.dataTask(with: request as URLRequest) { data, response, error in
+        let task = self.session.dataTask(with: request as URLRequest) { data, response, error in
             
             func errorHandler(_ error: String) {
                 print("there was an error: " + error)
@@ -314,10 +319,10 @@ func taskForPOSTDeleteSession(completionHandler: @escaping (_ result: AnyObject?
                 
             }
             let range = Range(uncheckedBounds: (5, data!.count))
-           let scrubbedData = data?.subdata(in: range)
+            let scrubbedData = data?.subdata(in: range)
             
             print(NSString(data: scrubbedData!, encoding: String.Encoding.utf8.rawValue)!)
-
+            
             var parsedResult :[String:AnyObject]!
             
             DispatchQueue.global(qos: .userInitiated).async {
@@ -329,13 +334,13 @@ func taskForPOSTDeleteSession(completionHandler: @escaping (_ result: AnyObject?
                      the user data */
                     print (parsedResult)
                     let userArray = parsedResult["results"] as! [AnyObject]
-                                let userdictionary = userArray[0]
+                    let userdictionary = userArray[0]
                     
-        
+                    
                     User.sharedUser().firstName = userdictionary["firstName"] as! String
                     User.sharedUser().lastName = userdictionary["lastName"] as! String
                     print( User.sharedUser().firstName)
-                        print(User.sharedUser().lastName)
+                    print(User.sharedUser().lastName)
                     
                     
                 } catch {
@@ -350,8 +355,8 @@ func taskForPOSTDeleteSession(completionHandler: @escaping (_ result: AnyObject?
     
     
     
-   
-  class  func sharedInstance() -> Client {
+    
+    class  func sharedInstance() -> Client {
         struct Singleton {
             static let sharedInstance = Client()
         }

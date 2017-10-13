@@ -21,16 +21,21 @@ extension Client {
             
             guard (error == nil) else {
                 print("Something went wrong with your POST request: \(String(describing: error))")
+                completionHandlerForLogin(false,nil,NSError(domain:"taskTologin", code: 1) )
                 return
             }
             
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
                 print("Your status code does not conform to 2xx.")
+                completionHandlerForLogin(false,nil,NSError(domain:"taskTologin", code: 1) )
+                
                 return
             }
             
             guard let data = data else {
+                
                 print("The request returned no data.")
+                completionHandlerForLogin(false,nil,NSError(domain:"taskTologin", code: 1) )
                 return
             }
             
@@ -47,54 +52,53 @@ extension Client {
                     
                     
                 }
-                
+                    
                 catch {
-                    print("Error with the JSON data")
+                    completionHandlerForLogin(false,nil ,NSError(domain:"taskToPlogin", code: 1) )
                 }
-
-                    guard let account = parsedResult?["account"] as? [String: AnyObject] else {
-                        print("There is an problem with your account information.")
-                        return
-                    }
-                    
-                    //check user id
-                    guard let userid = account["key"] as? String else {
-                        print("There is a problem with your user ID.")
-                        return
-                    }
-                    //check session dictionary
-                    guard let sessionDictionary = parsedResult?["session"] as? [String: AnyObject] else {
-                        print("There is a problem with your session dictionary.")
-                        return
-                    }
-                    //check session
-                    guard let sessions = sessionDictionary["id"] as? String else {
-                        print("There is a problem with your session ID.")
-                        return
-                    }
-                    
-                    
-                    print(userid)
-                    print(sessions)
-                    
-                   User.sharedUser().uniqueKey = userid
-                    self.appdelegate?.session = sessions
-                    
-                    
+                
+                guard let account = parsedResult?["account"] as? [String: AnyObject] else {
+                    print("There is an problem with your account information.")
+                    return
+                }
+                
+                //check user id
+                guard let userid = account["key"] as? String else {
+                    print("There is a problem with your user ID.")
+                    return
+                }
+                //check session dictionary
+                guard let sessionDictionary = parsedResult?["session"] as? [String: AnyObject] else {
+                    print("There is a problem with your session dictionary.")
+                    return
+                }
+                //check session
+                guard let sessions = sessionDictionary["id"] as? String else {
+                    print("There is a problem with your session ID.")
+                    return
+                }
+                
+                
+                print(userid)
+                print(sessions)
+                
+                User.sharedUser().uniqueKey = userid
+                self.appdelegate?.session = sessions
+                
+                
                 
             }
-
             
-        DispatchQueue.main.async {
-        completionHandlerForLogin(true,parsedResult,nil)
-           }
-    
-    
+            
+            DispatchQueue.main.async {
+                completionHandlerForLogin(true,parsedResult,nil)
+            }
+            
+            
+        }
+        
+        task.resume()
     }
-    
-    task.resume()
-    }
-    
     
     
 }

@@ -14,14 +14,25 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
     @IBOutlet weak var submitbutton: UIButton!
     
     @IBOutlet weak var enterlocation: UITextField!
-
+    
     @IBOutlet weak var enterwebsite: UITextField!
-
-
+    
+    
     @IBOutlet weak var activityindicator: UIActivityIndicatorView!
-
-   
+    
+    
     @IBOutlet weak var findonmap: UIButton!
+    
+    
+    @IBAction func cancel(_ sender: Any) {
+        enterwebsite.isHidden = false
+        enterlocation.isHidden = false
+        enterwebsite.text = ""
+        enterlocation.text = ""
+        submitbutton.isHidden = true
+        findonmap.isHidden = false
+        map.isHidden = true
+    }
     
     @IBAction func submit(_ sender: Any) {
         DispatchQueue.main.async {
@@ -49,14 +60,14 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
         }
         
     } // End submitLocatio
-        
-        
     
-
+    
+    
+    
     @IBOutlet weak var map: MKMapView!
-
+    
     @IBAction func findonmap(_ sender: Any) {
-        activityindicator.startAnimating()
+        
         DispatchQueue.main.async {
             self.activityindicator.startAnimating()
         }
@@ -128,11 +139,11 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
             
             self.present(errorMessage, animated: true)
         }
-
-         self.activityindicator.stopAnimating()
+        
+        self.activityindicator.stopAnimating()
         
     }
-   var coordinates:CLLocationCoordinate2D!
+    var coordinates:CLLocationCoordinate2D!
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -146,7 +157,7 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
         activityindicator.isHidden = true
         
     } // End viewWillAppear
-
+    
     
     
     
@@ -159,12 +170,12 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         
-       enterlocation.placeholder = ""
-      enterwebsite.placeholder = ""
+        enterlocation.placeholder = ""
+        enterwebsite.placeholder = ""
     }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-       enterwebsite.resignFirstResponder()
-   enterlocation.resignFirstResponder()
+        enterwebsite.resignFirstResponder()
+        enterlocation.resignFirstResponder()
         
         view.frame.origin.y = 0
         return true
@@ -223,8 +234,13 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
     }
     override func viewDidLoad() {
         activityindicator.isHidden = true
+        enterlocation.text = ""
+        enterwebsite.text = ""
+        enterlocation.delegate = self
+        enterwebsite.delegate = self
+        
     }
-
+    
 }
 
 

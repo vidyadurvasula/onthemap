@@ -9,11 +9,11 @@
 import UIKit
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
-
+    
     @IBOutlet weak var udacityimage: UIImageView!
     @IBOutlet weak var activityindicator: UIActivityIndicatorView!
     
-   
+    
     
     
     @IBOutlet weak var loginusername: UITextField!
@@ -25,40 +25,44 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
         
         guard let username = loginusername.text else {
-            alertAction()
+            createAlertViewController(title: "Invalidusername", message: "please enter the valid username", buttonTitle: "OK")
             return
         }
         guard let password = loginpassword.text else {
-            alertAction()
+            createAlertViewController(title: "Invalidpassword", message: "please enter the valid password", buttonTitle: "OK")
             return
         }
         DispatchQueue.main.async {
             self.activityindicator.startAnimating()
         }
-
         
-       Client.sharedInstance().login(username: username, password: password) {(success, result, error) in
-
-                DispatchQueue.main.async {
-                    if success {
-                       self.completeLogin()
-                    } else{
-                        print("cannot login")
-                    }
-         self.activityindicator.stopAnimating()
-            }
-              }
-            }
         
-
-
+        
+        Client.sharedInstance().login(username: username, password: password) {(success, result, error) in
+            
+            DispatchQueue.main.async {
+                if (username == "")||(password == "") {
+                    self.createAlertViewController(title: "Username or password cant be empty", message: "please enter valid username or password", buttonTitle: "ok")
+                }
+                if success {
+                    self.completeLogin()
+                } else if (error != nil){
+                    self.createAlertViewController(title: "On The Map", message: ("invalid username or password"), buttonTitle: "Ok")
+                }
+                self.activityindicator.stopAnimating()
+            }
+        }
+    }
+    
+    
+    
     private func completeLogin() {
         let storyboard = UIStoryboard (name: "Main", bundle: nil)
         let mapview = storyboard.instantiateViewController(withIdentifier: "MoviesTabBarController")
-    self.present(mapview, animated: true)
-       }
-
-
+        self.present(mapview, animated: true)
+    }
+    
+    
     @IBOutlet weak var Submitbutton: UIButton!
     
     @IBAction func signup(_ sender: Any) {
@@ -70,12 +74,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet weak var Facebookbutton: UIButton!
     
-   
-    func alertAction() {
-        let alertController = UIAlertController(title: "Error", message: "Empy username or password", preferredStyle: .alert)
-        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        
-        self.present(alertController, animated: true, completion: nil)
+    
+    func createAlertViewController(title:String, message: String, buttonTitle:String)
+    {
+        let alert = UIAlertController(title:title, message: message, preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: buttonTitle, style:UIAlertActionStyle.cancel, handler: nil))
+        self.present(alert, animated: true, completion: nil)
     }
     
     func getKeyboardHeight(_ notification:Notification) -> CGFloat {
@@ -91,13 +95,13 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     
-    func keyboardWillShow( notification: NSNotification) {
-        if (loginusername.isFirstResponder)||(loginpassword.isFirstResponder){
-            
-            view.frame.origin.y -= getKeyboardHeight(notification as Notification)
-        }
-        
-    }
+    //func keyboardWillShow( notification: NSNotification) {
+    //  if (loginusername.isFirstResponder){
+    
+    //  view.frame.origin.y -= getKeyboardHeight(notification as Notification)
+    // }
+    
+    // }
     
     func keyboardWillHide(notification: NSNotification){
         if self.view.frame.origin.y != 0 {
@@ -108,7 +112,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     func subscribeToKeyboardNotifications() {
         
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: .UIKeyboardWillShow, object: nil)
+        //     NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: .UIKeyboardWillHide, object: nil)
         
     }
@@ -125,9 +129,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             loginpassword.text = ""
         }
     }
-
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        view.frame.origin.y = 0
+        self.view.frame.origin.y  = 0
         textField.resignFirstResponder()
         return true
     }
@@ -135,17 +139,19 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     
     func initialsetup(textfield:UITextField, delegate:UITextFieldDelegate){
-        
+        textfield.keyboardType = UIKeyboardType.default
         textfield.delegate = delegate
         textfield.text = ""
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         initialsetup(textfield: loginusername, delegate: self)
         initialsetup(textfield: loginpassword, delegate: self)
+        
+        
     }
-
+    
     override func viewDidAppear(_ animated: Bool) {
         subscribeToKeyboardNotifications()
         
@@ -153,7 +159,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     override func viewDidDisappear(_ animated: Bool) {
         unsubscribeFromKeyboardNotifications()
-
+        
     }
     override func viewWillAppear(_ animated: Bool) {
         activityindicator.color = UIColor.darkGray

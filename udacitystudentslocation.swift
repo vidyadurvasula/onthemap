@@ -25,7 +25,7 @@ struct studentlocation {
     init?(dictionary: [String : AnyObject]) {
         
         // ensure there are corresponding values to each key
-                createdAt = dictionary[Client.ResponseKeys.createdAt] != nil ? dictionary[Client.ResponseKeys.createdAt] as? String:""
+        createdAt = dictionary[Client.ResponseKeys.createdAt] != nil ? dictionary[Client.ResponseKeys.createdAt] as? String:""
         firstName = dictionary[Client.ResponseKeys.firstName] != nil ? dictionary[Client.ResponseKeys.firstName] as? String:""
         lastName = dictionary[Client.ResponseKeys.lastName] != nil ? dictionary[Client.ResponseKeys.lastName] as? String:""
         latitude = dictionary[Client.ResponseKeys.latitude] != nil ? dictionary[Client.ResponseKeys.latitude] as? Double:0
@@ -36,14 +36,14 @@ struct studentlocation {
         uniqueKey = dictionary[Client.ResponseKeys.uniqueKey] != nil ? dictionary[Client.ResponseKeys.uniqueKey] as? String:""
         updatedAt = dictionary[Client.ResponseKeys.updatedAt] != nil ? dictionary[Client.ResponseKeys.updatedAt] as? String:""
         
-        }
-
-        
-        
-        
+    }
     
-
-
+    
+    
+    
+    
+    
+    
     static func studentLocationsFromResults(_ results: [[String:AnyObject]]) -> [studentlocation]
     {
         var studentLocations = Student.sharedInstance.studentLocations
