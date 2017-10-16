@@ -33,6 +33,8 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
         findonmap.isHidden = false
         map.isHidden = true
         activityindicator.isHidden = true
+        self.dismiss(animated: true, completion: nil)
+        
     }
     @IBOutlet weak var map: MKMapView!
     @IBAction func submit(_ sender: Any) {
@@ -90,20 +92,19 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
             
             userLocation.geocodeAddressString(enterlocation.text!, completionHandler: { placemark, error in
                 DispatchQueue.main.async {
-                    self.activityindicator.isHidden = false
+                    
                     self.activityindicator.startAnimating()
                 }
                 
                 if (error != nil) {
-                    DispatchQueue.main.async {
-                        self.activityindicator.startAnimating()
-                    }
                     
                     let errorMessage = UIAlertController.init(title: "Error", message: "Unable to find that location", preferredStyle: .alert)
                     let okAction = UIAlertAction(title: "OK", style: .default)
                     errorMessage.addAction(okAction)
                     self.present(errorMessage, animated: true)
-                    self.activityindicator.stopAnimating()
+                    DispatchQueue.main.async {
+                        self.activityindicator.stopAnimating()
+                    }
                 } else {
                     
                     
@@ -122,17 +123,17 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
                     self.map.addAnnotation(annotation)
                     self.map.camera.centerCoordinate = (locationData?.coordinate)!
                     self.map.camera.altitude = self.map.camera.altitude * 0.2
-                    self.activityindicator.stopAnimating()
+                    
                     
                 }
-                self.activityindicator.stopAnimating()
-                
+                DispatchQueue.main.async {
+                    
+                    self.activityindicator.stopAnimating()
+                }
+
             })
             
-            
-            
-            
-        } else if !enterlocation.hasText {
+                    } else if !enterlocation.hasText {
             let errorMessage = UIAlertController.init(title: "Forgot Something...", message: "Please enter a location.", preferredStyle: .alert)
             
             let okAction = UIAlertAction(title: "OK", style: .default, handler: { _ in })
@@ -140,6 +141,7 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
             errorMessage.addAction(okAction)
             
             self.present(errorMessage, animated: true)
+            self.activityindicator.stopAnimating()
             
         } else if !enterwebsite.hasText {
             let errorMessage = UIAlertController.init(title: "Forgot Something...", message: "Please enter a URL.", preferredStyle: .alert)
@@ -149,9 +151,12 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
             errorMessage.addAction(okAction)
             
             self.present(errorMessage, animated: true)
+            self.activityindicator.stopAnimating()
         }
-        
+        DispatchQueue.main.async {
+
         self.activityindicator.stopAnimating()
+        }
         
     }
     var coordinates:CLLocationCoordinate2D!
@@ -193,7 +198,6 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
         super.viewWillAppear(animated)
         submitbutton.isHidden = true
         map.isHidden = true
-        map.delegate = self
         activityindicator.hidesWhenStopped = true
         activityindicator.isHidden = true
         

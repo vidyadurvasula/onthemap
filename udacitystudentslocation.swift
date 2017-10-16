@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct studentlocation {
+struct Studentlocation {
     
     var createdAt : String?
     var firstName : String?
@@ -44,13 +44,13 @@ struct studentlocation {
     
     
     
-    static func studentLocationsFromResults(_ results: [[String:AnyObject]]) -> [studentlocation]
+    static func studentLocationsFromResults(_ results: [[String:AnyObject]]) -> [Studentlocation]
     {
         var studentLocations = Student.sharedInstance.studentLocations
         
         for eachLocation in results
         {
-            studentLocations.append(studentlocation(dictionary: eachLocation)!)
+            studentLocations.append(Studentlocation(dictionary: eachLocation)!)
         }
         return studentLocations
     }

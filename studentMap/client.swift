@@ -1,5 +1,5 @@
 //
-//  client.swift
+//  Client.swift
 //  studentMap
 //
 //  Created by Vidya Durvasula on 9/29/17.
@@ -58,7 +58,7 @@ class Client : NSObject {
                     if let actualresults = Result["results"] as? [[String:AnyObject]]
                     {
                         
-                        let studentLocations = studentlocation.studentLocationsFromResults( actualresults )
+                        let studentLocations = Studentlocation.studentLocationsFromResults( actualresults )
                         
                         
                         completionHandlerForGET(studentLocations as AnyObject?,nil)

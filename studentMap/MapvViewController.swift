@@ -31,10 +31,10 @@ class MapvViewController: UIViewController, MKMapViewDelegate {
             }
             DispatchQueue.main.async
                 {
-                    var studentLocations = [studentlocation]()
+                    var studentLocations = [Studentlocation]()
                     if let studentResults = results
                     {
-                        studentLocations = studentResults as! [studentlocation]
+                        studentLocations = studentResults as! [Studentlocation]
                     }
                     var annotations = [MKPointAnnotation]()
                     
@@ -149,10 +149,10 @@ class MapvViewController: UIViewController, MKMapViewDelegate {
             }
             DispatchQueue.main.async
                 {
-                    var studentLocations = [studentlocation]()
+                    var studentLocations = [Studentlocation]()
                     if let studentResults = results
                     {
-                        studentLocations = studentResults as! [studentlocation]
+                        studentLocations = studentResults as! [Studentlocation]
                     }
                     var annotations = [MKPointAnnotation]()
                     
@@ -175,11 +175,7 @@ class MapvViewController: UIViewController, MKMapViewDelegate {
             }
         })    }
     
-    override func viewDidLoad() {
-        map.delegate = self
-        
-    }
-
+    
     
     
 }

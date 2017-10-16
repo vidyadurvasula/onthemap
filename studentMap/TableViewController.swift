@@ -25,8 +25,9 @@ class TableViewController: UIViewController, UITableViewDelegate,UITableViewData
 
         let InfoVc = self.storyboard?.instantiateViewController(withIdentifier: "InformationViewController") as! InformationPostingViewController
         self.present(InfoVc,animated: true,completion: nil)
-        
-      acticityindicator.stopAnimating()
+      DispatchQueue.main.async {
+      self.acticityindicator.stopAnimating()
+        }
     }
     
     @IBAction func logout(_ sender: Any) {
@@ -86,7 +87,7 @@ class TableViewController: UIViewController, UITableViewDelegate,UITableViewData
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let student = studentLocations[indexPath.row] as studentlocation
+        let student = studentLocations[indexPath.row] as Studentlocation
         let studentURL = student.mediaURL
         let app = UIApplication.shared
         let studentopenurl = URL(string: studentURL!)
@@ -127,7 +128,7 @@ class TableViewController: UIViewController, UITableViewDelegate,UITableViewData
             {
                 DispatchQueue.main.async
                     {
-                        self.studentLocations = studentResults as! [studentlocation]
+                        self.studentLocations = studentResults as! [Studentlocation]
                         self.tableview.reloadData()
                 }
             }

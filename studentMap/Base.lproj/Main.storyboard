@@ -176,16 +176,17 @@
                                     <outlet property="delegate" destination="GPd-yd-BNa" id="Tfh-6t-jDE"/>
                                 </connections>
                             </tableView>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="GkT-0P-YFW">
-                                <rect key="frame" x="358" y="85" width="20" height="20"/>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="OK8-Gy-h14">
+                                <rect key="frame" x="146" y="85" width="20" height="20"/>
                             </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="GkT-0P-YFW" firstAttribute="top" secondItem="UbO-W9-1US" secondAttribute="bottom" constant="21" id="4UY-jP-edl"/>
                             <constraint firstItem="Zzr-3b-i4E" firstAttribute="top" secondItem="UbO-W9-1US" secondAttribute="bottom" constant="21" id="6O4-9P-p20"/>
                             <constraint firstItem="Zzr-3b-i4E" firstAttribute="leading" secondItem="IE0-dI-7OM" secondAttribute="leadingMargin" constant="-20" id="KxM-0z-fFj"/>
+                            <constraint firstItem="OK8-Gy-h14" firstAttribute="top" secondItem="UbO-W9-1US" secondAttribute="bottom" constant="21" id="MBq-eL-W3J"/>
                             <constraint firstItem="v73-Jb-Xgu" firstAttribute="top" secondItem="Zzr-3b-i4E" secondAttribute="bottom" constant="8" id="bCl-tz-YiK"/>
+                            <constraint firstItem="OK8-Gy-h14" firstAttribute="leading" secondItem="IE0-dI-7OM" secondAttribute="leadingMargin" constant="130" id="gEk-hR-OKm"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Zzr-3b-i4E" secondAttribute="trailing" constant="-20" id="nNj-0W-ffy"/>
                         </constraints>
                     </view>
@@ -209,7 +210,7 @@
                         </rightBarButtonItems>
                     </navigationItem>
                     <connections>
-                        <outlet property="acticityindicator" destination="GkT-0P-YFW" id="E9N-F7-G0l"/>
+                        <outlet property="acticityindicator" destination="OK8-Gy-h14" id="mKC-PB-6Zo"/>
                         <outlet property="tableview" destination="Zzr-3b-i4E" id="Odc-pF-BML"/>
                     </connections>
                 </viewController>
@@ -248,6 +249,9 @@
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="1lL-ig-9CF">
                                 <rect key="frame" x="16" y="94" width="288" height="417"/>
+                                <connections>
+                                    <outlet property="delegate" destination="wOW-gZ-sYs" id="RUM-77-FLg"/>
+                                </connections>
                             </mapView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -289,7 +293,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yeP-7J-Gfg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2238" y="-1177"/>
+            <point key="canvasLocation" x="-2198" y="-1254"/>
         </scene>
         <!--AddStudentlocation-->
         <scene sceneID="WiG-Je-TDc">
@@ -308,6 +312,9 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="728" id="bkC-3j-atF"/>
                                 </constraints>
+                                <connections>
+                                    <outlet property="delegate" destination="460-aS-4Cx" id="gCm-D5-3km"/>
+                                </connections>
                             </mapView>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8pB-7V-msq">
                                 <rect key="frame" x="-4" y="10" width="328" height="44"/>

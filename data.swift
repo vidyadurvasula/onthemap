@@ -9,7 +9,7 @@
 import Foundation
 class Student: NSObject {
     
-    var studentLocations = [studentlocation]()
+    var studentLocations = [Studentlocation]()
     static let sharedInstance = Student()
     
     
