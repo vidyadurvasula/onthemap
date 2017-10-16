@@ -12,7 +12,6 @@ import Foundation
 class TableViewController: UIViewController, UITableViewDelegate,UITableViewDataSource,UIGestureRecognizerDelegate{
     
     
-    var studentLocations = Student.sharedInstance.studentLocations
     
     @IBOutlet weak var acticityindicator: UIActivityIndicatorView!
     
@@ -20,11 +19,14 @@ class TableViewController: UIViewController, UITableViewDelegate,UITableViewData
     
     
     @IBAction func addlocation(_ sender: Any) {
-        
+        DispatchQueue.main.async {
+            self.acticityindicator.startAnimating()
+        }
+
         let InfoVc = self.storyboard?.instantiateViewController(withIdentifier: "InformationViewController") as! InformationPostingViewController
         self.present(InfoVc,animated: true,completion: nil)
         
-        
+      acticityindicator.stopAnimating()
     }
     
     @IBAction func logout(_ sender: Any) {
@@ -42,6 +44,10 @@ class TableViewController: UIViewController, UITableViewDelegate,UITableViewData
     
     
     @IBAction func refresh(_ sender: Any) {
+        DispatchQueue.main.async {
+            self.acticityindicator.startAnimating()
+        }
+
         Client.sharedInstance().taskForGETMethod({ (results,error) -> Void in
             
             guard(error == nil) else {
@@ -55,11 +61,12 @@ class TableViewController: UIViewController, UITableViewDelegate,UITableViewData
         })
         
         self.tableview.reloadData()
-        
+        acticityindicator.stopAnimating()
         
     } // End logoutBut
     
-    
+    var studentLocations = Student.sharedInstance.studentLocations
+  
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return studentLocations.count    }
@@ -81,10 +88,22 @@ class TableViewController: UIViewController, UITableViewDelegate,UITableViewData
         
         let student = studentLocations[indexPath.row] as studentlocation
         let studentURL = student.mediaURL
-        
         let app = UIApplication.shared
-        app.open(URL(string: studentURL!)!, options: [:], completionHandler: nil)
-               
+        let studentopenurl = URL(string: studentURL!)
+        if  studentopenurl != nil{
+            
+            app.open(studentopenurl!, options: [:], completionHandler: nil)
+        }
+        
+        else {
+            let errorMessage = UIAlertController.init(title: "InvalidUrl", message: " url is not valid", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "OK", style: .default)
+            errorMessage.addAction(okAction)
+            self.present(errorMessage, animated: true)
+            
+        }
+        
+        
     }
     
     
@@ -119,7 +138,7 @@ class TableViewController: UIViewController, UITableViewDelegate,UITableViewData
             }
             
         })
-       
+        
         self.tableview.reloadData()
     }
     
@@ -131,7 +150,7 @@ class TableViewController: UIViewController, UITableViewDelegate,UITableViewData
         self.tableview.delegate = self
         self.tableview.dataSource = self
         
-        // Do any additional setup after loading the view.
+        
     }
     
 }

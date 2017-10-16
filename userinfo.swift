@@ -29,5 +29,6 @@ class User : NSObject {
         
         return Singleton.sharedUser
     }
-    
+   
+            
 } // End User

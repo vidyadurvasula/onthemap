@@ -32,8 +32,9 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
         submitbutton.isHidden = true
         findonmap.isHidden = false
         map.isHidden = true
+        activityindicator.isHidden = true
     }
-    
+    @IBOutlet weak var map: MKMapView!
     @IBAction func submit(_ sender: Any) {
         DispatchQueue.main.async {
             self.activityindicator.startAnimating()
@@ -43,14 +44,17 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
             
             Student.sharedInstance.studentLocations.removeAll()
             
-            Client.sharedInstance().taskForuserdata(completionHandlerforuserdata: {
+            Client.sharedInstance().taskForuserdata(completionHandlerforuserdata: { error in
+                
+                guard (error == nil) else {
+                    self.createAlertViewController(title: "submit", message: (error)!, buttonTitle: "Ok")
+                    return
+                }
+                
                 Client.sharedInstance().taskForPOSTStudent(completionHandler: { error in
                     
                     guard (error == nil) else {
-                        let errorMessage = UIAlertController.init(title: "Uhoh!", message: "Please check your network connection and try again.", preferredStyle: .alert)
-                        let okAction = UIAlertAction(title: "OK", style: .default)
-                        errorMessage.addAction(okAction)
-                        self.present(errorMessage, animated: true)
+                        self.createAlertViewController(title: "submit", message: (error)!, buttonTitle: "Ok")
                         return
                     }
                     
@@ -59,21 +63,16 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
             self.activityindicator.stopAnimating()
         }
         
-    } // End submitLocatio
+    } // End submitLocation
     
-    
-    
-    
-    @IBOutlet weak var map: MKMapView!
     
     @IBAction func findonmap(_ sender: Any) {
         
-        DispatchQueue.main.async {
-            self.activityindicator.startAnimating()
-        }
-        
         if enterlocation.hasText && enterwebsite.hasText {
             if !(enterwebsite.text?.contains("https://"))! {
+                DispatchQueue.main.async {
+                    self.activityindicator.startAnimating()
+                }
                 let errorMessage = UIAlertController.init(title: "Forgot Something...", message: "Please enter https:// before web address.", preferredStyle: .alert)
                 
                 let okAction = UIAlertAction(title: "OK", style: .default, handler: { _ in })
@@ -81,6 +80,7 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
                 errorMessage.addAction(okAction)
                 
                 self.present(errorMessage, animated: true)
+                activityindicator.stopAnimating()
             }
             
             let userWebAddress = enterwebsite.text! as String
@@ -89,20 +89,30 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
             let userLocation = CLGeocoder()
             
             userLocation.geocodeAddressString(enterlocation.text!, completionHandler: { placemark, error in
+                DispatchQueue.main.async {
+                    self.activityindicator.isHidden = false
+                    self.activityindicator.startAnimating()
+                }
                 
                 if (error != nil) {
+                    DispatchQueue.main.async {
+                        self.activityindicator.startAnimating()
+                    }
+                    
                     let errorMessage = UIAlertController.init(title: "Error", message: "Unable to find that location", preferredStyle: .alert)
                     let okAction = UIAlertAction(title: "OK", style: .default)
                     errorMessage.addAction(okAction)
                     self.present(errorMessage, animated: true)
+                    self.activityindicator.stopAnimating()
                 } else {
+                    
                     
                     self.map.isHidden = false
                     self.submitbutton.isHidden = false
                     self.findonmap.isHidden = true
                     self.enterlocation.isHidden = true
                     self.enterwebsite.isHidden = true
-                    
+                    self.activityindicator.isHidden = false
                     let locationData = placemark?[0].location
                     User.sharedUser().latitude = (locationData?.coordinate.latitude)! as Double
                     User.sharedUser().longitude = (locationData?.coordinate.longitude)! as Double
@@ -113,13 +123,15 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
                     self.map.addAnnotation(annotation)
                     self.map.camera.centerCoordinate = (locationData?.coordinate)!
                     self.map.camera.altitude = self.map.camera.altitude * 0.2
+                    self.activityindicator.stopAnimating()
+                    
                 }
                 
             })
             
-            DispatchQueue.main.async {
-                self.activityindicator.stopAnimating()
-            }
+            
+            self.activityindicator.stopAnimating()
+            
             
         } else if !enterlocation.hasText {
             let errorMessage = UIAlertController.init(title: "Forgot Something...", message: "Please enter a location.", preferredStyle: .alert)
@@ -145,21 +157,6 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
     }
     var coordinates:CLLocationCoordinate2D!
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        enterlocation.delegate = self
-        enterwebsite.delegate = self
-        submitbutton.isHidden = true
-        map.isHidden = true
-        
-        map.delegate = self
-        
-        activityindicator.isHidden = true
-        
-    } // End viewWillAppear
-    
-    
-    
     
     func createAlertViewController(title:String, message: String, buttonTitle:String)
     {
@@ -174,71 +171,44 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
         enterwebsite.placeholder = ""
     }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        enterwebsite.resignFirstResponder()
-        enterlocation.resignFirstResponder()
-        
+        textField.resignFirstResponder()
         view.frame.origin.y = 0
         return true
     }
-    
-    func getKeyboardHeight(_ notification:Notification) -> CGFloat {
-        
-        //  let userInfo = notification.userInfo
-        let keyboardBeginFrame = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue
-        let keyboardEndFrame = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
-        
-        let screenHeight = UIScreen.main.bounds.height
-        let isBeginOrEnd = keyboardBeginFrame.origin.y == screenHeight || keyboardEndFrame.origin.y == screenHeight
-        let heightOffset = keyboardBeginFrame.origin.y - keyboardEndFrame.origin.y - (isBeginOrEnd ? bottomLayoutGuide.length : 0)
-        return heightOffset
-    }
-    
-    
-    func keyboardWillShow( notification: NSNotification) {
-        if (enterwebsite.isFirstResponder){
-            
-            view.frame.origin.y -= getKeyboardHeight(notification as Notification)
-        }
+    func hideKeyboardWhenTappedAround() {
+        view.frame.origin.y = 0
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(InformationPostingViewController.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
         
     }
     
-    func keyboardWillHide(notification: NSNotification){
-        if self.view.frame.origin.y != 0 {
-            view.frame.origin.y += getKeyboardHeight(notification as Notification)
-            
-        }
-        
-    }
-    func subscribeToKeyboardNotifications() {
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: .UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: .UIKeyboardWillHide, object: nil)
-        
+    func dismissKeyboard() {
+        view.frame.origin.y = 0
+        view.endEditing(true)
     }
     
-    func unsubscribeFromKeyboardNotifications() {
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        submitbutton.isHidden = true
+        map.isHidden = true
+        map.delegate = self
+        activityindicator.hidesWhenStopped = true
+        activityindicator.isHidden = true
         
-        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
-    }
-    override func viewDidAppear(_ animated: Bool) {
-        subscribeToKeyboardNotifications()
-        
-        
-    }
-    override func viewDidDisappear(_ animated: Bool) {
-        unsubscribeFromKeyboardNotifications()
-        
-        
-        
-    }
+    } // End viewWillAppear
+    
+    
+    
     override func viewDidLoad() {
         activityindicator.isHidden = true
         enterlocation.text = ""
         enterwebsite.text = ""
         enterlocation.delegate = self
         enterwebsite.delegate = self
-        
+        hideKeyboardWhenTappedAround()
     }
     
 }

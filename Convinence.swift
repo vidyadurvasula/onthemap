@@ -8,7 +8,7 @@
 
 import Foundation
 extension Client {
-    func login(username: String, password: String, completionHandlerForLogin: @escaping (_ success: Bool, _ result: AnyObject?, _ error: NSError?) -> Void) {
+    func login(username: String, password: String, completionHandlerForLogin: @escaping (_ success: Bool, _ result: AnyObject?, _ error: String?) -> Void) {
         
         let request = NSMutableURLRequest(url: URL(string: Client.urlUdacity.sessionURL)!)
         request.httpMethod = "POST"
@@ -21,13 +21,15 @@ extension Client {
             
             guard (error == nil) else {
                 print("Something went wrong with your POST request: \(String(describing: error))")
-                completionHandlerForLogin(false,nil,NSError(domain:"taskTologin", code: 1) )
+                
+        completionHandlerForLogin(false,nil,error?.localizedDescription )
+                
                 return
-            }
             
+            }
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
                 print("Your status code does not conform to 2xx.")
-                completionHandlerForLogin(false,nil,NSError(domain:"taskTologin", code: 1) )
+                completionHandlerForLogin(false,nil,"Bad response from the server.  Check username/password.")
                 
                 return
             }
@@ -35,7 +37,7 @@ extension Client {
             guard let data = data else {
                 
                 print("The request returned no data.")
-                completionHandlerForLogin(false,nil,NSError(domain:"taskTologin", code: 1) )
+                completionHandlerForLogin(false,nil,error?.localizedDescription )
                 return
             }
             
@@ -54,7 +56,7 @@ extension Client {
                 }
                     
                 catch {
-                    completionHandlerForLogin(false,nil ,NSError(domain:"taskToPlogin", code: 1) )
+                    completionHandlerForLogin(false,nil ,error.localizedDescription )
                 }
                 
                 guard let account = parsedResult?["account"] as? [String: AnyObject] else {

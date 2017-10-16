@@ -144,7 +144,7 @@ class Client : NSObject {
     } // End taskForPOSTStudent
     
     
-    func taskForuserdata(completionHandlerforuserdata: @escaping () -> Void) {
+    func taskForuserdata(completionHandlerforuserdata: @escaping ( _ error: String?) -> Void) {
         print("Starting taskForGETSession")
         
         let request = NSMutableURLRequest(url: URL(string: "https://www.udacity.com/api/users/\(User.sharedUser().uniqueKey)")!)
@@ -161,19 +161,21 @@ class Client : NSObject {
             
             /* GUARD: Was there an error? */
             guard (error == nil) else {
-                sendError("There was an error with your request: \(error!)")
+                completionHandlerforuserdata((error?.localizedDescription)!)
+                
                 return
             }
             
             /* GUARD: Did we get a successful 2XX response? */
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
-                sendError("Your request returned a status code other than 2xx!")
+                completionHandlerforuserdata((error?.localizedDescription)!)
+                
                 return
             }
             
             /* GUARD: Was there any data returned? */
             guard let data = data else {
-                sendError("No data was returned by the request!")
+                completionHandlerforuserdata((error?.localizedDescription)!)
                 return
             }
             
@@ -208,8 +210,8 @@ class Client : NSObject {
                 } catch {
                     print("Error with the JSON data")
                 }
+                completionHandlerforuserdata(nil)
                 
-                completionHandlerforuserdata()
             }
         }
         

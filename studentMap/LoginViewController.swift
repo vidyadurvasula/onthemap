@@ -14,7 +14,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var activityindicator: UIActivityIndicatorView!
     
     
+    @IBOutlet weak var Submitbutton: UIButton!
     
+    @IBOutlet weak var Facebookbutton: UIButton!
     
     @IBOutlet weak var loginusername: UITextField!
     
@@ -32,6 +34,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             createAlertViewController(title: "Invalidpassword", message: "please enter the valid password", buttonTitle: "OK")
             return
         }
+        
+        if (username == "")||(password == "") {
+            self.createAlertViewController(title: "Username or password cant be empty", message: "please enter valid username or password", buttonTitle: "ok")
+        }
+        
         DispatchQueue.main.async {
             self.activityindicator.startAnimating()
         }
@@ -41,13 +48,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         Client.sharedInstance().login(username: username, password: password) {(success, result, error) in
             
             DispatchQueue.main.async {
-                if (username == "")||(password == "") {
-                    self.createAlertViewController(title: "Username or password cant be empty", message: "please enter valid username or password", buttonTitle: "ok")
-                }
                 if success {
                     self.completeLogin()
                 } else if (error != nil){
-                    self.createAlertViewController(title: "On The Map", message: ("invalid username or password"), buttonTitle: "Ok")
+                    self.createAlertViewController(title: "On The Map", message: (error)!, buttonTitle: "Ok")
                 }
                 self.activityindicator.stopAnimating()
             }
@@ -56,14 +60,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     
     
-    private func completeLogin() {
-        let storyboard = UIStoryboard (name: "Main", bundle: nil)
-        let mapview = storyboard.instantiateViewController(withIdentifier: "MoviesTabBarController")
-        self.present(mapview, animated: true)
-    }
-    
-    
-    @IBOutlet weak var Submitbutton: UIButton!
     
     @IBAction func signup(_ sender: Any) {
         
@@ -72,7 +68,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         app.open(URL(string:Client.urlUdacity.udacitySignupURL)!, options: [:], completionHandler: nil)
     }
     
-    @IBOutlet weak var Facebookbutton: UIButton!
     
     
     func createAlertViewController(title:String, message: String, buttonTitle:String)
@@ -94,14 +89,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         return heightOffset
     }
     
-    
-    //func keyboardWillShow( notification: NSNotification) {
-    //  if (loginusername.isFirstResponder){
-    
-    //  view.frame.origin.y -= getKeyboardHeight(notification as Notification)
-    // }
-    
-    // }
     
     func keyboardWillHide(notification: NSNotification){
         if self.view.frame.origin.y != 0 {
@@ -143,6 +130,13 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         textfield.delegate = delegate
         textfield.text = ""
     }
+    
+    private func completeLogin() {
+        let storyboard = UIStoryboard (name: "Main", bundle: nil)
+        let mapview = storyboard.instantiateViewController(withIdentifier: "MoviesTabBarController")
+        self.present(mapview, animated: true)
+    }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()

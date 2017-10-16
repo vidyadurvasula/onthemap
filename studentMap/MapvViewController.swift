@@ -11,6 +11,12 @@ import UIKit
 
 class MapvViewController: UIViewController, MKMapViewDelegate {
     
+    @IBOutlet weak var refresh: UIBarButtonItem!
+    @IBOutlet weak var map: MKMapView!
+    @IBOutlet weak var logout: UIBarButtonItem!
+
+
+    
     @IBAction func refreshbutton(_ sender: Any) {
         
         self.map.removeAnnotations(map.annotations)
@@ -40,7 +46,7 @@ class MapvViewController: UIViewController, MKMapViewDelegate {
                         
                         let annotation = MKPointAnnotation()
                         annotation.coordinate = studentCoordinate
-                        annotation.title = "\(eachStudent.firstName) \(eachStudent.lastName)"
+                        annotation.title = "\(eachStudent.firstName!) \(eachStudent.lastName!)"
                         annotation.subtitle = eachStudent.mediaURL
                         
                         annotations.append(annotation)
@@ -55,14 +61,14 @@ class MapvViewController: UIViewController, MKMapViewDelegate {
         
     }
     @IBAction func updatelocation(_ sender: Any) {
+        
         performSegue(withIdentifier: "addstudentlocation", sender: self)
+        
+        
     }
     
-    @IBOutlet weak var refresh: UIBarButtonItem!
-    @IBOutlet weak var map: MKMapView!
     
     
-    @IBOutlet weak var logout: UIBarButtonItem!
     
     @IBAction func logoutbutton(_ sender: Any) {
         
@@ -75,7 +81,58 @@ class MapvViewController: UIViewController, MKMapViewDelegate {
         
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        
+        let reuseId = "pin"
+        
+        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
+        
+        if pinView == nil {
+            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+            pinView!.canShowCallout = true
+            pinView!.pinTintColor = .red
+            pinView!.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
+        }
+        else {
+            pinView!.annotation = annotation
+        }
+        
+        return pinView
+    }
+    
+    func alertAction() {
+        let alertController = UIAlertController(title: "Error", message: "error occured", preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        
+        self.present(alertController, animated: true)
+        
+    }
+
+    
+    
+    // This delegate method is implemented to respond to taps. It opens the system browser
+    // to the URL specified in the annotationViews subtitle property.
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        if control == view.rightCalloutAccessoryView {
+            let app = UIApplication.shared
+            if let toOpen = view.annotation?.subtitle! {
+                let url = (URL(string: toOpen))
+                if url != nil {
+                    
+                    app.open(url!, options: [:], completionHandler: nil)
+                } else {
+                    let errorMessage = UIAlertController.init(title: "InvalidUrl", message: " url is not valid", preferredStyle: .alert)
+                    let okAction = UIAlertAction(title: "OK", style: .default)
+                    errorMessage.addAction(okAction)
+                    self.present(errorMessage, animated: true)
+                }
+                
+            }
+        }
+    }
+    
+    
+        override func viewWillAppear(_ animated: Bool) {
         
         super.viewWillAppear(animated)
         
@@ -83,6 +140,7 @@ class MapvViewController: UIViewController, MKMapViewDelegate {
         Client.sharedInstance().taskForGETMethod( {(results,error) -> Void in
             
             guard(error == nil) else {
+                
                 let errorMessage = UIAlertController.init(title: "Network Error", message: "Download failed Please check network connection and try again.", preferredStyle: .alert)
                 let okAction = UIAlertAction(title: "OK", style: .default)
                 errorMessage.addAction(okAction)
@@ -106,7 +164,7 @@ class MapvViewController: UIViewController, MKMapViewDelegate {
                         
                         let annotation = MKPointAnnotation()
                         annotation.coordinate = studentCoordinate
-                        annotation.title = "\(eachStudent.firstName) \(eachStudent.lastName)"
+                        annotation.title = "\(String(describing: eachStudent.firstName!))\(String(describing: eachStudent.lastName!))"
                         annotation.subtitle = eachStudent.mediaURL
                         
                         annotations.append(annotation)
@@ -121,45 +179,7 @@ class MapvViewController: UIViewController, MKMapViewDelegate {
         map.delegate = self
         
     }
-    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        
-        let reuseId = "pin"
-        
-        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
-        
-        if pinView == nil {
-            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
-            pinView!.canShowCallout = true
-            pinView!.pinTintColor = .red
-            pinView!.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
-        }
-        else {
-            pinView!.annotation = annotation
-        }
-        
-        return pinView
-    }
-    
-    
-    // This delegate method is implemented to respond to taps. It opens the system browser
-    // to the URL specified in the annotationViews subtitle property.
-    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-        if control == view.rightCalloutAccessoryView {
-            let app = UIApplication.shared
-            if let toOpen = view.annotation?.subtitle! {
-                app.open(URL(string: toOpen)!, options: [:], completionHandler: nil)
-            }
-        }
-    }
-    
-    
-    func alertAction() {
-        let alertController = UIAlertController(title: "Error", message: "error occured", preferredStyle: .alert)
-        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        
-        self.present(alertController, animated: true)
-        
-    }
+
     
     
 }
