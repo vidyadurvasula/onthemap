@@ -112,7 +112,6 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
                     self.findonmap.isHidden = true
                     self.enterlocation.isHidden = true
                     self.enterwebsite.isHidden = true
-                    self.activityindicator.isHidden = false
                     let locationData = placemark?[0].location
                     User.sharedUser().latitude = (locationData?.coordinate.latitude)! as Double
                     User.sharedUser().longitude = (locationData?.coordinate.longitude)! as Double
@@ -126,11 +125,11 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
                     self.activityindicator.stopAnimating()
                     
                 }
+                self.activityindicator.stopAnimating()
                 
             })
             
             
-            self.activityindicator.stopAnimating()
             
             
         } else if !enterlocation.hasText {
