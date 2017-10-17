@@ -14,8 +14,8 @@ class MapvViewController: UIViewController, MKMapViewDelegate {
     @IBOutlet weak var refresh: UIBarButtonItem!
     @IBOutlet weak var map: MKMapView!
     @IBOutlet weak var logout: UIBarButtonItem!
-
-
+    
+    
     
     @IBAction func refreshbutton(_ sender: Any) {
         
@@ -81,7 +81,7 @@ class MapvViewController: UIViewController, MKMapViewDelegate {
         
     }
     
-        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         
         let reuseId = "pin"
         
@@ -107,7 +107,6 @@ class MapvViewController: UIViewController, MKMapViewDelegate {
         self.present(alertController, animated: true)
         
     }
-
     
     
     // This delegate method is implemented to respond to taps. It opens the system browser
@@ -132,7 +131,7 @@ class MapvViewController: UIViewController, MKMapViewDelegate {
     }
     
     
-        override func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         
         super.viewWillAppear(animated)
         

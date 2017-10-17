@@ -328,10 +328,6 @@
                                     </navigationItem>
                                 </items>
                             </navigationBar>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Rv5-ys-X83">
-                                <rect key="frame" x="116" y="232" width="88" height="20"/>
-                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </activityIndicatorView>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" placeholder="enter the link" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="x7m-IT-Qnh" userLabel="enterthewebsite">
                                 <rect key="frame" x="31" y="125" width="258" height="40"/>
                                 <constraints>
@@ -358,18 +354,25 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NTt-as-09f">
-                                <rect key="frame" x="76" y="282" width="164" height="33"/>
+                                <rect key="frame" x="76" y="285" width="164" height="33"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <state key="normal" title="Submit"/>
                                 <connections>
                                     <action selector="submit:" destination="460-aS-4Cx" eventType="touchUpInside" id="1sl-9q-hR8"/>
                                 </connections>
                             </button>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Rv5-ys-X83">
+                                <rect key="frame" x="116" y="215" width="88" height="30"/>
+                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="fzz-P5-heD"/>
+                                </constraints>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="2gP-5W-hw9" firstAttribute="leading" secondItem="Ex9-GK-J9r" secondAttribute="leadingMargin" constant="-20" id="6dA-79-HKE"/>
-                            <constraint firstItem="NTt-as-09f" firstAttribute="top" secondItem="Rv5-ys-X83" secondAttribute="bottom" constant="30" id="6pq-cP-flt"/>
+                            <constraint firstItem="NTt-as-09f" firstAttribute="top" secondItem="Rv5-ys-X83" secondAttribute="bottom" constant="40" id="6pq-cP-flt"/>
                             <constraint firstItem="FPC-Kr-Qq7" firstAttribute="leading" secondItem="Ex9-GK-J9r" secondAttribute="leadingMargin" constant="15" id="9D3-bs-ECB"/>
                             <constraint firstAttribute="trailingMargin" secondItem="x7m-IT-Qnh" secondAttribute="trailing" constant="15" id="BZX-hR-gS6"/>
                             <constraint firstItem="Ngx-q5-8s6" firstAttribute="top" secondItem="x7m-IT-Qnh" secondAttribute="bottom" constant="29" id="BcJ-VD-2XM"/>
@@ -383,7 +386,7 @@
                             <constraint firstAttribute="trailingMargin" secondItem="FPC-Kr-Qq7" secondAttribute="trailing" constant="15" id="WYw-s2-XSQ"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Rv5-ys-X83" secondAttribute="trailing" constant="100" id="Zcj-xo-NDO"/>
                             <constraint firstAttribute="trailingMargin" secondItem="2gP-5W-hw9" secondAttribute="trailing" constant="-20" id="eUS-2W-E6k"/>
-                            <constraint firstItem="Rv5-ys-X83" firstAttribute="top" secondItem="x7m-IT-Qnh" secondAttribute="bottom" constant="67" id="i5E-3h-i7e"/>
+                            <constraint firstItem="Rv5-ys-X83" firstAttribute="top" secondItem="x7m-IT-Qnh" secondAttribute="bottom" constant="50" id="i5E-3h-i7e"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Ngx-q5-8s6" secondAttribute="trailing" constant="50" id="n6S-ml-5M0"/>
                             <constraint firstItem="FPC-Kr-Qq7" firstAttribute="top" secondItem="DZK-9H-3nA" secondAttribute="bottom" constant="55" id="qwT-hP-dVN"/>
                             <constraint firstItem="Rv5-ys-X83" firstAttribute="leading" secondItem="Ex9-GK-J9r" secondAttribute="leadingMargin" constant="100" id="u9E-eE-wFf"/>

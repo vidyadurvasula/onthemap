@@ -62,19 +62,30 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
                     
                     self.dismiss(animated: true, completion: nil)})})
             
-            self.activityindicator.stopAnimating()
         }
+        self.activityindicator.stopAnimating()
         
     } // End submitLocation
     
     
     @IBAction func findonmap(_ sender: Any) {
         
+        
+        
+        
+        
+        
+        
+        
         if enterlocation.hasText && enterwebsite.hasText {
+            
+            DispatchQueue.main.async {
+                self.activityindicator.isHidden = false
+                self.activityindicator.startAnimating()
+            }
+            
             if !(enterwebsite.text?.contains("https://"))! {
-                DispatchQueue.main.async {
-                    self.activityindicator.startAnimating()
-                }
+                
                 let errorMessage = UIAlertController.init(title: "Forgot Something...", message: "Please enter https:// before web address.", preferredStyle: .alert)
                 
                 let okAction = UIAlertAction(title: "OK", style: .default, handler: { _ in })
@@ -82,7 +93,8 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
                 errorMessage.addAction(okAction)
                 
                 self.present(errorMessage, animated: true)
-                activityindicator.stopAnimating()
+                self.activityindicator.isHidden = true
+                
             }
             
             let userWebAddress = enterwebsite.text! as String
@@ -91,10 +103,6 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
             let userLocation = CLGeocoder()
             
             userLocation.geocodeAddressString(enterlocation.text!, completionHandler: { placemark, error in
-                DispatchQueue.main.async {
-                    
-                    self.activityindicator.startAnimating()
-                }
                 
                 if (error != nil) {
                     
@@ -102,9 +110,8 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
                     let okAction = UIAlertAction(title: "OK", style: .default)
                     errorMessage.addAction(okAction)
                     self.present(errorMessage, animated: true)
-                    DispatchQueue.main.async {
-                        self.activityindicator.stopAnimating()
-                    }
+                    self.activityindicator.isHidden = true
+                    
                 } else {
                     
                     
@@ -113,6 +120,7 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
                     self.findonmap.isHidden = true
                     self.enterlocation.isHidden = true
                     self.enterwebsite.isHidden = true
+                    self.activityindicator.isHidden = true
                     let locationData = placemark?[0].location
                     User.sharedUser().latitude = (locationData?.coordinate.latitude)! as Double
                     User.sharedUser().longitude = (locationData?.coordinate.longitude)! as Double
@@ -126,14 +134,12 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
                     
                     
                 }
-                DispatchQueue.main.async {
-                    
-                    self.activityindicator.stopAnimating()
-                }
-
             })
             
-                    } else if !enterlocation.hasText {
+            
+            
+            
+        } else if !enterlocation.hasText {
             let errorMessage = UIAlertController.init(title: "Forgot Something...", message: "Please enter a location.", preferredStyle: .alert)
             
             let okAction = UIAlertAction(title: "OK", style: .default, handler: { _ in })
@@ -141,7 +147,7 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
             errorMessage.addAction(okAction)
             
             self.present(errorMessage, animated: true)
-            self.activityindicator.stopAnimating()
+            
             
         } else if !enterwebsite.hasText {
             let errorMessage = UIAlertController.init(title: "Forgot Something...", message: "Please enter a URL.", preferredStyle: .alert)
@@ -151,11 +157,6 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
             errorMessage.addAction(okAction)
             
             self.present(errorMessage, animated: true)
-            self.activityindicator.stopAnimating()
-        }
-        DispatchQueue.main.async {
-
-        self.activityindicator.stopAnimating()
         }
         
     }
@@ -168,7 +169,10 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
         alert.addAction(UIAlertAction(title: buttonTitle, style:UIAlertActionStyle.cancel, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
-    
+    func delay(_ delay:Double, closure:@escaping ()->()) {
+        let when = DispatchTime.now() + delay
+        DispatchQueue.main.asyncAfter(deadline: when, execute: closure)
+    }
     func textFieldDidEndEditing(_ textField: UITextField) {
         
         enterlocation.placeholder = ""
@@ -200,13 +204,12 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
         map.isHidden = true
         activityindicator.hidesWhenStopped = true
         activityindicator.isHidden = true
+        activityindicator.color = UIColor.darkGray
         
-    } // End viewWillAppear
-    
+    }
     
     
     override func viewDidLoad() {
-        activityindicator.isHidden = true
         enterlocation.text = ""
         enterwebsite.text = ""
         enterlocation.delegate = self
