@@ -6,7 +6,6 @@
 //  Copyright © 2017 Vidya Durvasula. All rights reserved.
 //
 import MapKit
-import CoreLocation
 import UIKit
 
 class MapvViewController: UIViewController, MKMapViewDelegate {
@@ -80,7 +79,9 @@ class MapvViewController: UIViewController, MKMapViewDelegate {
         self.dismiss(animated: true, completion: nil)
         
     }
-    
+    override func viewDidLoad() {
+        map.delegate = self
+    }
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         
         let reuseId = "pin"
@@ -133,9 +134,9 @@ class MapvViewController: UIViewController, MKMapViewDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         
-        super.viewWillAppear(animated)
+        //super.viewWillAppear(animated)
         
-        self.navigationController?.setNavigationBarHidden(false, animated: true)
+       // self.navigationController?.setNavigationBarHidden(false, animated: true)
         Client.sharedInstance().taskForGETMethod( {(results,error) -> Void in
             
             guard(error == nil) else {
@@ -152,6 +153,7 @@ class MapvViewController: UIViewController, MKMapViewDelegate {
                     if let studentResults = results
                     {
                         studentLocations = studentResults as! [Studentlocation]
+                       
                     }
                     var annotations = [MKPointAnnotation]()
                     
@@ -172,7 +174,9 @@ class MapvViewController: UIViewController, MKMapViewDelegate {
                     
                     
             }
-        })    }
+        })
+        
+    }
     
     
     

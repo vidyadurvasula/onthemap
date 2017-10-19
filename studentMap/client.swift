@@ -39,7 +39,8 @@ class Client : NSObject {
             
             if error != nil{
                 let userInfo = [NSLocalizedDescriptionKey: error]
-                completionHandlerForGET(nil,NSError(domain:"taskToGetSession", code: 1, userInfo:userInfo ))
+                completionHandlerForGET(nil,NSError(domain:"taskToGetSession", code: 1, userInfo:userInfo
+                ))
             }
             
             guard let data = data else {

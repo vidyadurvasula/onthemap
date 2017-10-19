@@ -191,7 +191,7 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
         
     }
     
-    func dismissKeyboard() {
+    @objc func dismissKeyboard() {
         view.frame.origin.y = 0
         view.endEditing(true)
     }

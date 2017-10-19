@@ -90,7 +90,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     
-    func keyboardWillHide(notification: NSNotification){
+    @objc func keyboardWillHide(notification: NSNotification){
         if self.view.frame.origin.y != 0 {
             view.frame.origin.y += getKeyboardHeight(notification as Notification)
             
